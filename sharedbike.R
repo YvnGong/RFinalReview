@@ -3,6 +3,7 @@ library(reshape2)
 library(ggplot2)
 library(geosphere)
 library(lubridate)
+library(leaflet)
 
 #download data to your local computer
 download.file(url="https://s3.amazonaws.com/stat.184.data/BikeShare/Trips.csv",destfile='Trips.csv')
@@ -21,10 +22,23 @@ str(Trips)
 str(Stations)
 
 #Bike rental duration
+#Using library lubridate convert char to date time object
 rental_sdate<-ymd_hms(Trips$sdate)
 rental_edate<-ymd_hms(Trips$edate)
 duration_long<-period_to_seconds(hms(Trips$duration))
 rental_duration<-as.numeric(rental_edate - rental_sdate)
+
+#discrete components of a date
+#The day of the year
+day<-yday(rental_sdate)
+#The day of the week
+weekday<-wday(rental_sdate)
+#The hour of the day
+hour<-hour(rental_sdate)
+
+#distribution of bike trips by hour of the da
+ggplot(Trips, aes(x=hour))+geom_density(fill="gray")
+
 #We are interested in the distance between start and end stations, notice the Lat Lon for each station is 
 #in the Stations dataset and the information about each trip is in the Trip dataset. 
 #using the merge function, make new columns in the trip dataset that give the lat and lon of both the 
